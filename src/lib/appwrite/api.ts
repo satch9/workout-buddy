@@ -20,6 +20,7 @@ export async function createWorkerAccount(worker: INewWorker) {
         const newWorker = await saveWorkerDB({
             workerId: newAccount.$id,
             username: worker.username,
+            email: worker.email,
         });
 
         console.log("newWorker API", newWorker);
@@ -34,6 +35,7 @@ export async function createWorkerAccount(worker: INewWorker) {
 export async function saveWorkerDB(worker: {
     workerId: string;
     username: string;
+    email:string;
 }) {
     try {
         const documentId = ID.unique();
@@ -85,24 +87,38 @@ export async function signInAccount(worker: { email: string; password: string; }
     }
 }
 
-export async function getCurrentWorker() {
+export async function getAccount() {
     try {
-
         const currentAccount = await account.get();
 
-        if (!currentAccount) throw Error;
-
-        const currentWorker = await databases.listDocuments(
-            appwriteConfig.databaseId,
-            appwriteConfig.workersCollectionId,
-            [Query.equal('accountId', currentAccount.$id)]
-        )
-
-        if (!currentWorker) throw Error;
-
-        return currentWorker.documents[0];
-
+        return currentAccount;
     } catch (error) {
         console.error(error)
     }
+}
+
+export async function getCurrentWorker() {
+    
+    const currentAccount = getAccount();
+
+    const worker = currentAccount
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .then(async (current: any) => {
+            console.log("current api", current);
+            const currentWorker = await databases.listDocuments(
+                appwriteConfig.databaseId,
+                appwriteConfig.workersCollectionId,
+                [Query.equal('workerId', current.$id)]
+            )
+            if (!currentWorker) throw Error;
+
+            console.log("currentWorker.documents api", currentWorker.documents);
+
+            return currentWorker.documents[0];
+        })
+        .catch((err) => {
+            console.error(err)
+        })
+
+        return worker;
 }

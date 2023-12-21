@@ -1,10 +1,9 @@
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from 'react-hook-form';
-import { SigninValidation } from "@/lib/validation";
 import { Link, useNavigate } from "react-router-dom";
 
-import { Button } from "@/components/ui/button"
+
 import {
     Form,
     FormControl,
@@ -12,25 +11,24 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import Loader from './../../components/ui/shared/Loader';
+
 import { useSignInAccount } from "@/lib/react-query/queries";
-import { useToast } from "@/components/ui/use-toast"
 import { useWorkerContext } from '@/context/AuthContext';
+import { SigninValidation } from "@/lib/validation";
 
 
 const SigninForm = () => {
     const { toast } = useToast();
-    const { checkAuthWorker, isLoading: isWorkerLoading } = useWorkerContext();
     const navigate = useNavigate()
+    const { checkAuthWorker, isLoading: isWorkerLoading } = useWorkerContext();
 
+    const { mutateAsync: signInAccount, isPending: isLoading } = useSignInAccount();
 
-    const {
-        mutateAsync: signInAccount,
-    } = useSignInAccount();
-
-    // 1. Define your form.
     const form = useForm<z.infer<typeof SigninValidation>>({
         resolver: zodResolver(SigninValidation),
         defaultValues: {
@@ -39,20 +37,19 @@ const SigninForm = () => {
         },
     });
 
-    async function onSubmit(values: z.infer<typeof SigninValidation>) {
+    const handleSignin = async (values: z.infer<typeof SigninValidation>) => {
         console.log("signin values", values)
 
         const session = await signInAccount({
             email: values.email,
             password: values.password
-        })
+        });
 
         if (!session) {
-            return toast({
-                title: "Echec de connexion. Merci d'essayer à nouveau"
-            })
+            toast({ title: "Echec de connexion. Merci d'essayer à nouveau" });
+            return;
         }
-        console.log('session', session)
+        console.log('session', session);
 
         const isLoggedIn = await checkAuthWorker();
 
@@ -60,9 +57,8 @@ const SigninForm = () => {
             form.reset();
             navigate('/');
         } else {
-            return toast({
-                title: "Votre inscription a échoué. Merci d'essayer à nouveau"
-            })
+            toast({ title: "Votre inscription a échoué. Merci d'essayer à nouveau" });
+            return;
         }
     }
 
@@ -83,7 +79,7 @@ const SigninForm = () => {
                 </p>
 
                 <form
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={form.handleSubmit(handleSignin)}
                     className="flex flex-col gap-5 w-full mt-4"
                 >
 
@@ -114,7 +110,7 @@ const SigninForm = () => {
                         )}
                     />
                     <Button type="submit" className="shad-button_primary">
-                        {isWorkerLoading ? (
+                        {isLoading || isWorkerLoading ? (
                             <div className="flex-center gap-2">
                                 <Loader /> Chargement...
                             </div>

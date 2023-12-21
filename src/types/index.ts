@@ -1,10 +1,6 @@
 export type IWorker = {
     id: string;
-    firstname: string;
-    lastname: string;
-    gender: string;
     username: string;
-    dateOfBirth: string;
     email: string;
     password: string;
 }

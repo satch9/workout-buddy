@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { INITIAL_WORKER } from "../constants";
-import { IContextType } from '../types';
 import { useNavigate } from 'react-router-dom';
+
+import { IContextType } from '../types';
 import { getCurrentWorker } from '../lib/appwrite/api'
+import { INITIAL_WORKER } from "../constants";
 
 const INITIAL_STATE = {
     worker: INITIAL_WORKER,
@@ -27,19 +28,18 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate()
 
     const checkAuthWorker = async () => {
+        setIsLoading(true);
         try {
             const currentAccount = await getCurrentWorker();
+
+            console.log('currentAccount AuthContext ', currentAccount);
 
             if (currentAccount) {
                 setWorker({
                     id: currentAccount.$id,
-                    firstname: currentAccount.firstname,
-                    lastname: currentAccount.lastname,
-                    gender: currentAccount.gender,
                     username: currentAccount.username,
-                    dateOfBirth: currentAccount.dateOfBirth,
                     email: currentAccount.email,
-                    password: ''
+                    password:''
                 })
                 setIsAuthenticated(true);
 
@@ -56,14 +56,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     useEffect(() => {
-        //
+        const cookieFallback = localStorage.getItem("cookieFallback");
         if (
-            localStorage.getItem('cookieFallBack') === '[]' ||
-            localStorage.getItem('cookieFallBack') === null
+            cookieFallback === '[]' ||
+            cookieFallback === null ||
+            cookieFallback === undefined 
         ) navigate('/sign-in');
 
         checkAuthWorker();
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const value = {

@@ -45,41 +45,48 @@ const SignupForm = () => {
         },
     });
 
-    async function onSubmit(values: z.infer<typeof SignupValidation>) {
-        console.log("signup values", values)
+    const handleSignup = async (values: z.infer<typeof SignupValidation>) => {
 
-        // create new User
-        const newUser = createWorkerAccount(values);
+        try {
 
-        console.log("newUser Signupform", newUser);
+            console.log("signup values", values)
 
-        if (!newUser) {
-            return toast({
-                title: "Votre inscription a échoué. Merci d'essayer à nouveau"
+            // create new User
+            const newUser = createWorkerAccount(values);
+
+            console.log("newUser Signupform", newUser);
+
+            if (!newUser) {
+                return toast({
+                    title: "Votre inscription a échoué. Merci d'essayer à nouveau"
+                })
+            }
+
+            const session = await signInAccount({
+                email: values.email,
+                password: values.password
             })
-        }
 
-        const session = await signInAccount({
-            email: values.email,
-            password: values.password
-        })
+            if (!session) {
+                return toast({
+                    title: "Echec de connexion. Merci d'essayer à nouveau"
+                })
+            }
+            console.log('session', session)
 
-        if (!session) {
-            return toast({
-                title: "Echec de connexion. Merci d'essayer à nouveau"
-            })
-        }
-        console.log('session', session)
+            const isLoggedIn = await checkAuthWorker();
 
-        const isLoggedIn = await checkAuthWorker();
+            if (isLoggedIn) {
+                form.reset();
+                navigate('/');
+            } else {
+                return toast({
+                    title: "Votre inscription a échoué. Merci d'essayer à nouveau"
+                })
+            }
 
-        if (isLoggedIn) {
-            form.reset();
-            navigate('/');
-        } else {
-            return toast({
-                title: "Votre inscription a échoué. Merci d'essayer à nouveau"
-            })
+        } catch (error) {
+            console.log({ error });
         }
     }
 
@@ -100,7 +107,7 @@ const SignupForm = () => {
                 </p>
 
                 <form
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={form.handleSubmit(handleSignup)}
                     className="flex flex-col gap-5 w-full mt-4"
                 >
                     <FormField
@@ -143,7 +150,7 @@ const SignupForm = () => {
                         )}
                     />
                     <Button type="submit" className="shad-button_primary">
-                        {isCreatingAccount ? (
+                        {isCreatingAccount || isSigningIn || isPlayerLoading ? (
                             <div className="flex-center gap-2">
                                 <Loader /> Chargement...
                             </div>
