@@ -11,7 +11,7 @@ import Home from './_root/pages/Home';
 function App() {
 
   return (
-    <main className='flex h-screen'>
+    <main className='flex h-screen '>
       <Routes>
         {/**Public Routes */}
         <Route element={<AuthLayout />}>

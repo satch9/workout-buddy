@@ -19,3 +19,10 @@ export type IContextType = {
     setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
     checkAuthWorker: () => Promise<boolean>;
 }
+
+export type IExerciceType = {
+    title: string;
+    load: number;
+    reps: number;
+    link: string;
+}

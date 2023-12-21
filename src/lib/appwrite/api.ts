@@ -35,7 +35,7 @@ export async function createWorkerAccount(worker: INewWorker) {
 export async function saveWorkerDB(worker: {
     workerId: string;
     username: string;
-    email:string;
+    email: string;
 }) {
     try {
         const documentId = ID.unique();
@@ -56,19 +56,7 @@ export async function saveWorkerDB(worker: {
 
         return newWorker;
 
-        /* const newWorkerId = newWorker.$id;
-        const userID = newWorkerId;
-
-        const updatedExercices = {
-            workers: userID
-        }
-
-        await databases.updateDocument(
-            appwriteConfig.databaseId,
-            appwriteConfig.exercicesCollectionId,
-            newWorkerId,
-            updatedExercices
-        ); */
+       
 
 
 
@@ -98,7 +86,7 @@ export async function getAccount() {
 }
 
 export async function getCurrentWorker() {
-    
+
     const currentAccount = getAccount();
 
     const worker = currentAccount
@@ -120,5 +108,55 @@ export async function getCurrentWorker() {
             console.error(err)
         })
 
-        return worker;
+    return worker;
+}
+
+export async function addNewExercice(exercice: { exercice_title: string; load: number; reps: number; link: string; }) {
+    try {
+        const currentAccount = getAccount();
+        const documentId = ID.unique();
+
+        const exerciceFound = currentAccount
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .then(async (exo: any) => {
+                console.log("exo api", exo);
+                const exoData = await databases.createDocument(
+                    appwriteConfig.databaseId,
+                    appwriteConfig.exercicesCollectionId,
+                    documentId,
+                    exercice,
+                    [
+                        Permission.write(Role.any()),
+                        Permission.read(Role.any())
+                    ]
+                );
+
+                return exoData;
+
+            })
+            .catch((err) => {
+                console.error(err)
+            })
+
+             /* const newWorkerId = newWorker.$id;
+        const userID = newWorkerId;
+
+        const updatedExercices = {
+            workers: userID
+        }
+
+        await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.exercicesCollectionId,
+            newWorkerId,
+            updatedExercices
+        ); */
+
+        console.log("exerciceFound",exerciceFound);
+
+
+        return exerciceFound;
+    } catch (error) {
+        console.error(error)
+    }
 }

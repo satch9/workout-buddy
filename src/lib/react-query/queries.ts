@@ -4,7 +4,7 @@ import {
 
 } from "@tanstack/react-query"
 
-import { createWorkerAccount, signInAccount } from "../appwrite/api"
+import { createWorkerAccount, signInAccount, addNewExercice } from "../appwrite/api"
 import { INewWorker } from "@/types";
 
 export const useCreateWorkerAccount = () => {
@@ -19,5 +19,16 @@ export const useSignInAccount = () => {
             email: string;
             password: string
         }) => signInAccount(player),
+    })
+}
+
+export const useAddNewWorkOut = () => {
+    return useMutation({
+        mutationFn: (exercice: {
+            exercice_title: string;
+            load: number;
+            reps: number;
+            link:string;
+        }) => addNewExercice(exercice),
     })
 }
