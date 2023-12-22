@@ -71,6 +71,16 @@ export async function signInAccount(worker: { email: string; password: string; }
     }
 }
 
+export async function signOutAccount() {
+    try {
+        const session = await account.deleteSession("current")
+
+        return session;
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 export async function getAccount() {
     try {
         const currentAccount = await account.get();
@@ -83,28 +93,22 @@ export async function getAccount() {
 
 export async function getCurrentWorker() {
 
-    const currentAccount = getAccount();
+    const currentAccount = await getAccount();
 
-    const worker = currentAccount
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .then(async (current: any) => {
-            console.log("current api", current);
-            const currentWorker = await databases.listDocuments(
-                appwriteConfig.databaseId,
-                appwriteConfig.workersCollectionId,
-                [Query.equal('workerId', current.$id)]
-            )
-            if (!currentWorker) throw Error;
+    //console.log('currentAccount', currentAccount);
 
-            //console.log("currentWorker.documents api", currentWorker.documents);
+    const currentWorker = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.workersCollectionId,
+        [Query.equal("workerId", currentAccount!.$id)]
+    );
 
-            return currentWorker.documents[0];
-        })
-        .catch((err) => {
-            console.error(err)
-        })
+    if(!currentWorker) throw Error;
 
-    return worker;
+    //console.log("api currentWorker.documents[0]",currentWorker.documents)
+
+    return currentWorker.documents[0];
+
 }
 
 export async function addNewExercice(exercice: IExerciceType) {
@@ -112,8 +116,8 @@ export async function addNewExercice(exercice: IExerciceType) {
     try {
         const documentId = ID.unique();
         const currentWorker = await getCurrentWorker();
-        const workerId = currentWorker?.workerId
-        console.log("currentWorker", currentWorker?.workerId);
+        const workerId = currentWorker?.$id
+        console.log("currentWorker", workerId);
 
 
         const newExercice = await databases.createDocument(
@@ -125,35 +129,36 @@ export async function addNewExercice(exercice: IExerciceType) {
                 load: exercice.load,
                 reps: exercice.reps,
                 link: exercice.link === "" ? null : exercice.link,
-                workers: [workerId]
+                workers: workerId
             },
             [
-                Permission.write(Role.user(workerId)),
-                Permission.update(Role.user(workerId)),
-                Permission.delete(Role.user(workerId))
+                Permission.write(Role.any()),
+                Permission.update(Role.any()),
+                Permission.delete(Role.any())
             ]
         );
 
         return newExercice;
 
-
-
-        /* const newWorkerId = newWorker.$id;
-   const userID = newWorkerId;
-
-   const updatedExercices = {
-       workers: userID
-   }
-
-   await databases.updateDocument(
-       appwriteConfig.databaseId,
-       appwriteConfig.exercicesCollectionId,
-       newWorkerId,
-       updatedExercices
-   ); */
-
-
     } catch (error) {
         console.error(error)
+    }
+}
+
+export async function getExercices(workerId:string){
+    
+    if(!workerId) throw Error;
+    
+    try {
+        const exercices = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.exercicesCollectionId,
+            [Query.equal("workers", workerId)]
+        )
+
+        console.log("exercices api", exercices);
+        return exercices;
+    } catch (error) {
+        console.error(error);
     }
 }

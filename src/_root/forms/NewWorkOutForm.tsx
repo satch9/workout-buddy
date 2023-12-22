@@ -18,11 +18,14 @@ import Loader from './../../components/ui/shared/Loader';
 import { useAddNewWorkOut } from "@/lib/react-query/queries";
 import { AddNewWorkOutValidation } from "@/lib/validation";
 
+
 const NewWorkOutForm = () => {
 
     const { toast } = useToast();
 
-    const { mutateAsync: addNewWorkOut, isPending: isLoading } = useAddNewWorkOut();
+    const { mutateAsync: addNewWorkOut, isPending: isLoading} = useAddNewWorkOut();
+
+    //console.log("worker newworkoutform", worker);
 
     const form = useForm<z.infer<typeof AddNewWorkOutValidation>>({
         resolver: zodResolver(AddNewWorkOutValidation),
@@ -35,7 +38,7 @@ const NewWorkOutForm = () => {
     });
 
     const handleAddNewWorkOut = async (values: z.infer<typeof AddNewWorkOutValidation>) => {
-        console.log("add new workout values", values)
+        //console.log("add new workout values", values)
 
         const newWorkOut = await addNewWorkOut({
             title: values.title,
@@ -47,9 +50,12 @@ const NewWorkOutForm = () => {
         if (!newWorkOut) {
             toast({ title: "Merci de bien vérifier vos données" });
             return;
+        }else{
+            form.reset();
+            toast({ title: "Votre ajout d'un nouvel élément c'est bien passé !" });
         }
 
-        toast({ title: "Votre ajout d'un nouvel élément c'est bien passé !" });
+        
     }
 
     return (
@@ -120,7 +126,7 @@ const NewWorkOutForm = () => {
                         )}
                     />
                     <Button type="submit" className="shad-button_primary">
-                        {isLoading  ? (
+                        {isLoading ? (
                             <div className="flex-center gap-2">
                                 <Loader /> Chargement...
                             </div>
