@@ -30,7 +30,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const checkAuthWorker = async () => {
         setIsLoading(true);
         try {
-            const currentAccount = await getCurrentWorker();
+            const currentAccount =  await getCurrentWorker();
 
             console.log('currentAccount AuthContext ', currentAccount);
 

@@ -1,6 +1,6 @@
 import { ID, Query, Permission, Role } from 'appwrite';
 import { account, appwriteConfig, databases } from './config';
-import { INewWorker } from '../../types';
+import { IExerciceType, INewWorker } from '../../types';
 
 export async function createWorkerAccount(worker: INewWorker) {
     try {
@@ -56,10 +56,6 @@ export async function saveWorkerDB(worker: {
 
         return newWorker;
 
-       
-
-
-
     } catch (error) {
         console.error(error)
     }
@@ -100,7 +96,7 @@ export async function getCurrentWorker() {
             )
             if (!currentWorker) throw Error;
 
-            console.log("currentWorker.documents api", currentWorker.documents);
+            //console.log("currentWorker.documents api", currentWorker.documents);
 
             return currentWorker.documents[0];
         })
@@ -111,51 +107,52 @@ export async function getCurrentWorker() {
     return worker;
 }
 
-export async function addNewExercice(exercice: { exercice_title: string; load: number; reps: number; link: string; }) {
+export async function addNewExercice(exercice: IExerciceType) {
+
     try {
-        const currentAccount = getAccount();
         const documentId = ID.unique();
+        const currentWorker = await getCurrentWorker();
+        const workerId = currentWorker?.workerId
+        console.log("currentWorker", currentWorker?.workerId);
 
-        const exerciceFound = currentAccount
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .then(async (exo: any) => {
-                console.log("exo api", exo);
-                const exoData = await databases.createDocument(
-                    appwriteConfig.databaseId,
-                    appwriteConfig.exercicesCollectionId,
-                    documentId,
-                    exercice,
-                    [
-                        Permission.write(Role.any()),
-                        Permission.read(Role.any())
-                    ]
-                );
 
-                return exoData;
-
-            })
-            .catch((err) => {
-                console.error(err)
-            })
-
-             /* const newWorkerId = newWorker.$id;
-        const userID = newWorkerId;
-
-        const updatedExercices = {
-            workers: userID
-        }
-
-        await databases.updateDocument(
+        const newExercice = await databases.createDocument(
             appwriteConfig.databaseId,
             appwriteConfig.exercicesCollectionId,
-            newWorkerId,
-            updatedExercices
-        ); */
+            documentId,
+            {
+                title: exercice.title,
+                load: exercice.load,
+                reps: exercice.reps,
+                link: exercice.link === "" ? null : exercice.link,
+                workers: [workerId]
+            },
+            [
+                Permission.write(Role.user(workerId)),
+                Permission.update(Role.user(workerId)),
+                Permission.delete(Role.user(workerId))
+            ]
+        );
 
-        console.log("exerciceFound",exerciceFound);
+        return newExercice;
 
 
-        return exerciceFound;
+
+        /* const newWorkerId = newWorker.$id;
+   const userID = newWorkerId;
+
+   const updatedExercices = {
+       workers: userID
+   }
+
+   await databases.updateDocument(
+       appwriteConfig.databaseId,
+       appwriteConfig.exercicesCollectionId,
+       newWorkerId,
+       updatedExercices
+   ); */
+
+
     } catch (error) {
         console.error(error)
     }

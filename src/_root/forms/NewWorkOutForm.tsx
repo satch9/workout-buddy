@@ -27,7 +27,7 @@ const NewWorkOutForm = () => {
     const form = useForm<z.infer<typeof AddNewWorkOutValidation>>({
         resolver: zodResolver(AddNewWorkOutValidation),
         defaultValues: {
-            exercice_title: "",
+            title: "",
             load: 0,
             reps: 0,
             link: ""
@@ -38,7 +38,7 @@ const NewWorkOutForm = () => {
         console.log("add new workout values", values)
 
         const newWorkOut = await addNewWorkOut({
-            exercice_title: values.exercice_title,
+            title: values.title,
             load: values.load,
             reps: values.reps,
             link: values.link
@@ -67,7 +67,7 @@ const NewWorkOutForm = () => {
 
                     <FormField
                         control={form.control}
-                        name="exercice_title"
+                        name="title"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Titre pour l'exercice</FormLabel>

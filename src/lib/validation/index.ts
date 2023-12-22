@@ -12,7 +12,7 @@ export const SigninValidation = z.object({
 });
 
 export const AddNewWorkOutValidation = z.object({
-    exercice_title: z.coerce.string().min(2, { message: "Trop court !" }),
+    title: z.coerce.string().min(2, { message: "Trop court !" }),
     load: z.coerce.number(),
     reps: z.coerce.number(), 
     link: z.coerce.string()

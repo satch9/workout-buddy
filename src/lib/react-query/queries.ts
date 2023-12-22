@@ -25,7 +25,7 @@ export const useSignInAccount = () => {
 export const useAddNewWorkOut = () => {
     return useMutation({
         mutationFn: (exercice: {
-            exercice_title: string;
+            title: string;
             load: number;
             reps: number;
             link:string;
