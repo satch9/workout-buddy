@@ -3,15 +3,20 @@ import { Button } from "@/components/ui/button";
 import { useWorkerContext } from "@/context/AuthContext";
 import { useSignOutAccount } from "@/lib/react-query/queries";
 import { useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast"
+
 
 const NavBar = () => {
     const { worker } = useWorkerContext();
     const navigate = useNavigate()
-    const { mutateAsync: signOutAccount, isSuccess } = useSignOutAccount();
-
+    const { mutateAsync: signOut, isSuccess } = useSignOutAccount();
+    const { toast } = useToast()
 
     useEffect(() => {
-        if (isSuccess) navigate(0)
+        if (isSuccess) {
+            toast({title:"Déconnexion réussie !"})
+            navigate("/sign-in");
+        }
     }, [isSuccess, navigate]);
 
     return (
@@ -28,7 +33,7 @@ const NavBar = () => {
                 </div>
 
                 {worker ? <div className="flex items-center  w-1/3 justify-end">
-                    <Button type="submit" className="shad-button_dark_4" onClick={() => signOutAccount()}>
+                    <Button type="submit" className="shad-button_dark_4" onClick={() => signOut()}>
                         déconnecter
                     </Button>
                 </div> : <div className="flex items-center  w-1/3 justify-end">
@@ -42,6 +47,7 @@ const NavBar = () => {
 
 
             </nav>
+
         </div>
     )
 }

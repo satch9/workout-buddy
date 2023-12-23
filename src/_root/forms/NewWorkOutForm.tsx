@@ -19,6 +19,7 @@ import { useAddNewWorkOut } from "@/lib/react-query/queries";
 import { AddNewWorkOutValidation } from "@/lib/validation";
 
 
+
 const NewWorkOutForm = () => {
 
     const { toast } = useToast();
@@ -37,6 +38,7 @@ const NewWorkOutForm = () => {
         },
     });
 
+
     const handleAddNewWorkOut = async (values: z.infer<typeof AddNewWorkOutValidation>) => {
         //console.log("add new workout values", values)
 
@@ -53,6 +55,7 @@ const NewWorkOutForm = () => {
         }else{
             form.reset();
             toast({ title: "Votre ajout d'un nouvel élément c'est bien passé !" });
+            
         }
 
         

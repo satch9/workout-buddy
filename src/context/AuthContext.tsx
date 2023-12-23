@@ -32,7 +32,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const currentAccount =  await getCurrentWorker();
 
-            //console.log('currentAccount AuthContext ', currentAccount);
+            console.log('currentAccount AuthContext ', currentAccount);
 
             if (currentAccount) {
                 setWorker({
@@ -61,7 +61,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             cookieFallback === '[]' ||
             cookieFallback === null ||
             cookieFallback === undefined 
-        ) navigate('/sign-in');
+        ) {navigate('/sign-in');}
 
         checkAuthWorker();
 

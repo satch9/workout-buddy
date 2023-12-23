@@ -78,6 +78,9 @@ const SignupForm = () => {
 
             if (isLoggedIn) {
                 form.reset();
+                toast({
+                    title: "Vous êtes connecté!"
+                })
                 navigate('/');
             } else {
                 return toast({

@@ -71,9 +71,9 @@ export async function signInAccount(worker: { email: string; password: string; }
     }
 }
 
-export async function signOutAccount() {
+export async function signOut() {
     try {
-        const session = await account.deleteSession("current")
+        const session = await account.deleteSessions()
 
         return session;
     } catch (error) {
@@ -92,22 +92,28 @@ export async function getAccount() {
 }
 
 export async function getCurrentWorker() {
+    try {
+        const currentAccount = await getAccount();
 
-    const currentAccount = await getAccount();
+        console.log('currentAccount', currentAccount);
 
-    //console.log('currentAccount', currentAccount);
+        if (!currentAccount) throw Error;
 
-    const currentWorker = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        appwriteConfig.workersCollectionId,
-        [Query.equal("workerId", currentAccount!.$id)]
-    );
+        const currentWorker = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.workersCollectionId,
+            [Query.equal("workerId", currentAccount?.$id)]
+        );
 
-    if(!currentWorker) throw Error;
+        if (!currentWorker) throw Error;
 
-    //console.log("api currentWorker.documents[0]",currentWorker.documents)
+        //console.log("api currentWorker.documents[0]",currentWorker.documents)
 
-    return currentWorker.documents[0];
+        return currentWorker.documents[0];
+
+    } catch (error) {
+        console.error(error);
+    }
 
 }
 
@@ -145,10 +151,13 @@ export async function addNewExercice(exercice: IExerciceType) {
     }
 }
 
-export async function getExercices(workerId:string){
-    
-    if(!workerId) throw Error;
-    
+export async function getExercices() {
+
+    const currentWorker = await getCurrentWorker();
+    const workerId = currentWorker?.$id
+
+    if (!workerId) throw Error;
+
     try {
         const exercices = await databases.listDocuments(
             appwriteConfig.databaseId,
@@ -158,6 +167,36 @@ export async function getExercices(workerId:string){
 
         console.log("exercices api", exercices);
         return exercices;
+    } catch (error) {
+        console.log(`${error} depuis getExercices api`);
+    }
+}
+
+export async function getRecentExercices() {
+    const exercices = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.exercicesCollectionId,
+        [Query.orderDesc("$createdAt")]
+    );
+
+    if (!exercices) throw Error;
+
+    return exercices;
+}
+
+export async function deleteExercice(exerciceId: string) {
+    if (!exerciceId) return;
+
+    try {
+        const statusCode = await databases.deleteDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.exercicesCollectionId,
+            exerciceId
+        );
+
+        if (!statusCode) throw Error;
+
+        return { statusCode: "OK" }
     } catch (error) {
         console.error(error);
     }

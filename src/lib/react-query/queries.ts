@@ -1,11 +1,16 @@
-import {
+import { useMutation, useQuery, useQueryClient, } from "@tanstack/react-query"
 
-    useMutation,
-
-} from "@tanstack/react-query"
-
-import { createWorkerAccount, signInAccount, signOutAccount, addNewExercice, getExercices } from "../appwrite/api"
+import { 
+    createWorkerAccount, 
+    signInAccount, 
+    signOut, 
+    addNewExercice, 
+    getExercices, 
+    getRecentExercices,
+    deleteExercice 
+} from "../appwrite/api"
 import { INewWorker } from "@/types";
+import { QUERY_KEYS } from "./queryKey";
 
 export const useCreateWorkerAccount = () => {
     return useMutation({
@@ -24,11 +29,13 @@ export const useSignInAccount = () => {
 
 export const useSignOutAccount = () => {
     return useMutation({
-        mutationFn: () => signOutAccount(),
+        mutationFn: () => signOut(),
     })
 }
 
 export const useAddNewWorkOut = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
         mutationFn: (exercice: {
             title: string;
@@ -36,11 +43,44 @@ export const useAddNewWorkOut = () => {
             reps: number;
             link: string;
         }) => addNewExercice(exercice),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_RECENT_EXERCICES]
+            })
+        }
     })
 }
 
 export const useGetExercices = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: (workerId: string) => getExercices(workerId),
+        mutationFn: () => getExercices(),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_RECENT_EXERCICES]
+            })
+        }
+    })
+
+}
+
+export const useGetRecentExercices = () => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_RECENT_EXERCICES],
+        queryFn: getRecentExercices,
+    });
+}
+
+export const useDeletePost =()=>{
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (exerciceId: string)=> deleteExercice(exerciceId),
+        onSuccess: ()=>{
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_RECENT_EXERCICES]
+            })
+        }
     })
 }
