@@ -20,10 +20,10 @@ export const useCreateWorkerAccount = () => {
 
 export const useSignInAccount = () => {
     return useMutation({
-        mutationFn: (player: {
+        mutationFn: (user: {
             email: string;
             password: string
-        }) => signInAccount(player),
+        }) => signInAccount(user),
     })
 }
 

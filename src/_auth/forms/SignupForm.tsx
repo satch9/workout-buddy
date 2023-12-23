@@ -45,32 +45,35 @@ const SignupForm = () => {
         },
     });
 
-    const handleSignup = async (values: z.infer<typeof SignupValidation>) => {
+    const handleSignup = async (user: z.infer<typeof SignupValidation>) => {
 
         try {
 
-            console.log("signup values", values)
+            console.log("signup user", user)
 
             // create new User
-            const newUser = createWorkerAccount(values);
+            const newUser = await createWorkerAccount(user);
 
             console.log("newUser Signupform", newUser);
 
             if (!newUser) {
-                return toast({
+                toast({
                     title: "Votre inscription a échoué. Merci d'essayer à nouveau"
-                })
+                });
+                return;
             }
 
             const session = await signInAccount({
-                email: values.email,
-                password: values.password
+                email: user.email,
+                password: user.password
             })
 
             if (!session) {
-                return toast({
+                toast({
                     title: "Echec de connexion. Merci d'essayer à nouveau"
                 })
+                navigate("/sign-in");
+                return;
             }
             console.log('session', session)
 
@@ -83,9 +86,10 @@ const SignupForm = () => {
                 })
                 navigate('/');
             } else {
-                return toast({
+                toast({
                     title: "Votre inscription a échoué. Merci d'essayer à nouveau"
-                })
+                });
+                return;
             }
 
         } catch (error) {

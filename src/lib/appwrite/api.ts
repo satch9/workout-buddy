@@ -61,9 +61,12 @@ export async function saveWorkerDB(worker: {
     }
 }
 
-export async function signInAccount(worker: { email: string; password: string; }) {
+export async function signInAccount(user: { email: string; password: string; }) {
     try {
-        const session = await account.createEmailSession(worker.email, worker.password)
+        console.log("user.email",user.email);
+        console.log("user.password",user.password);
+        
+        const session = await account.createEmailSession(user.email, user.password)
 
         return session;
     } catch (error) {

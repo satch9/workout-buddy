@@ -6,6 +6,7 @@ import Loader from "./Loader";
 import { Models } from "appwrite";
 import { multiFormatDateString } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast"
+import { useWorkerContext } from "@/context/AuthContext";
 
 
 
@@ -22,6 +23,7 @@ const WorkOutDetails = () => {
 
   const { mutateAsync: deleteExercice } = useDeletePost();
   const { toast } = useToast()
+  const { worker}= useWorkerContext()
 
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const WorkOutDetails = () => {
   }, [getRecentExercices]);
 
   console.log("exercices", exercices)
-
+console.log("worker", worker);
 
   if (isExercicesLoading) {
     // Loading state
