@@ -63,9 +63,9 @@ export async function saveWorkerDB(worker: {
 
 export async function signInAccount(user: { email: string; password: string; }) {
     try {
-        console.log("user.email",user.email);
-        console.log("user.password",user.password);
-        
+        console.log("user.email", user.email);
+        console.log("user.password", user.password);
+
         const session = await account.createEmailSession(user.email, user.password)
 
         return session;
@@ -176,10 +176,19 @@ export async function getExercices() {
 }
 
 export async function getRecentExercices() {
+
+    const currentWorker = await getCurrentWorker();
+    const workerId = currentWorker?.$id
+
+    if (!workerId) throw Error;
+
     const exercices = await databases.listDocuments(
         appwriteConfig.databaseId,
         appwriteConfig.exercicesCollectionId,
-        [Query.orderDesc("$createdAt")]
+        [
+            Query.orderDesc("$createdAt"),
+            Query.equal("workers", workerId)
+        ]
     );
 
     if (!exercices) throw Error;
@@ -203,4 +212,18 @@ export async function deleteExercice(exerciceId: string) {
     } catch (error) {
         console.error(error);
     }
+}
+
+export async function getMessages() {
+    try {
+        const response = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.messagesCollectionId,
+        )
+
+        return response;
+    } catch (error) {
+        console.error(error)
+    }
+
 }

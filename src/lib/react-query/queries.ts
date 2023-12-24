@@ -7,7 +7,8 @@ import {
     addNewExercice, 
     getExercices, 
     getRecentExercices,
-    deleteExercice 
+    deleteExercice, 
+    getMessages
 } from "../appwrite/api"
 import { INewWorker } from "@/types";
 import { QUERY_KEYS } from "./queryKey";
@@ -72,7 +73,7 @@ export const useGetRecentExercices = () => {
     });
 }
 
-export const useDeletePost =()=>{
+export const useDeleteExercice =()=>{
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -82,5 +83,11 @@ export const useDeletePost =()=>{
                 queryKey: [QUERY_KEYS.GET_RECENT_EXERCICES]
             })
         }
+    })
+}
+
+export const useGetMessages = ()=>{
+    return useMutation({
+        mutationFn: () => getMessages(),
     })
 }

@@ -1,15 +1,12 @@
 import { Link } from "react-router-dom";
 import { FaTrashCan } from "react-icons/fa6";
-import { useDeletePost, useGetRecentExercices } from "@/lib/react-query/queries";
+import { useDeleteExercice, useGetRecentExercices } from "@/lib/react-query/queries";
 import { useState, useEffect } from "react";
 import Loader from "./Loader";
 import { Models } from "appwrite";
 import { multiFormatDateString } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast"
 import { useWorkerContext } from "@/context/AuthContext";
-
-
-
 
 const WorkOutDetails = () => {
 
@@ -21,7 +18,7 @@ const WorkOutDetails = () => {
     isError: isErrorExercices
   } = useGetRecentExercices();
 
-  const { mutateAsync: deleteExercice } = useDeletePost();
+  const { mutateAsync: deleteExercice } = useDeleteExercice();
   const { toast } = useToast()
   const { worker}= useWorkerContext()
 

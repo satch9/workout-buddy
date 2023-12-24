@@ -8,6 +8,7 @@ export const appwriteConfig = {
     databaseId: import.meta.env.VITE_APP_APPWRITE_DATABASE_ID,
     exercicesCollectionId: import.meta.env.VITE_APP_APPWRITE_EXERCISES_COLLECTION_ID,
     workersCollectionId: import.meta.env.VITE_APP_APPWRITE_WORKERS_COLLECTION_ID,
+    messagesCollectionId:import.meta.env.VITE_APP_APPWRITE_MESSAGES_COLLECTION_ID,
     jwt: import.meta.env.VITE_APP_APPWRITE_JWT,
 }
 
