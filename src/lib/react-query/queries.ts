@@ -9,7 +9,8 @@ import {
     getRecentExercices,
     deleteExercice, 
     getMessages,
-    createMessage
+    createMessage,
+    getRecentMessages
 } from "../appwrite/api"
 import { INewWorker } from "@/types";
 import { QUERY_KEYS } from "./queryKey";
@@ -106,4 +107,11 @@ export const useAddNewMessage = () => {
             })
         }
     })
+}
+
+export const useGetRecentMessages = () => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_RECENT_MESSAGES],
+        queryFn: getRecentMessages,
+    });
 }

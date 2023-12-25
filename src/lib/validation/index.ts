@@ -17,3 +17,7 @@ export const AddNewWorkOutValidation = z.object({
     reps: z.coerce.number(), 
     link: z.coerce.string()
 });
+
+export const AddNewMessageValidation = z.object({
+    body: z.coerce.string().min(2, { message: "Trop court !" }),
+});

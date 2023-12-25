@@ -249,3 +249,18 @@ export async function createMessage(message: IMessageType){
         console.error(error);
     }
 }
+
+export async function getRecentMessages() {
+
+    const response = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.messagesCollectionId,
+        [
+            Query.orderDesc("$createdAt")
+        ]
+    );
+
+    if (!response) throw Error;
+
+    return response;
+}

@@ -30,7 +30,7 @@ const WorkOutDetails = () => {
   }, [getRecentExercices]);
 
   console.log("exercices", exercices)
-console.log("worker", worker);
+  console.log("worker", worker);
 
   if (isExercicesLoading) {
     // Loading state
