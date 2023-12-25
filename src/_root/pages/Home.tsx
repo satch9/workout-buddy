@@ -6,17 +6,22 @@ const Home = () => {
 
     return (
         <div className="flex flex-col container sm:flex-row">
-            <section className="w-full sm:w-1/3 p-3">
+            <section className="w-full sm:w-2/3">
                 <Room />
-            </section>
-            <section className="w-full sm:w-1/3 p-3">
-               <WorkOutDetails  /> 
+
+                <div className="w-full">
+                    <WorkOutDetails />
+                </div>
+
+
             </section>
             <section className="w-full sm:w-1/3">
                 <NewWorkOutForm />
             </section>
-            
+
+
         </div>
+
     )
 }
 

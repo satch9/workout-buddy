@@ -60,7 +60,7 @@ console.log("worker", worker);
   }
 
   return (
-    <div >
+    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-2">
       {exercices?.map((exercice: Models.Document, index) => (
         <div className="bg-white rounded mt-3 mb-3  mr-10 p-5 shadow-lg relative" key={index}>
           <h4 className="text-light-4"><strong>{exercice.title}</strong></h4>

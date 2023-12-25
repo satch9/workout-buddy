@@ -26,3 +26,7 @@ export type IExerciceType = {
     reps: number;
     link: string;
 }
+
+export type IMessageType = {
+    body: string;
+}

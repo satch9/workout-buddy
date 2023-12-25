@@ -21,6 +21,11 @@ const Room = () => {
 
     console.log("worker", worker)
 
+    const handleSubmit = async (e: { preventDefault: () => void; })=>{
+        e.preventDefault();
+
+        let response
+    }
 
     return (
         <main>

@@ -1,6 +1,6 @@
 import { ID, Query, Permission, Role } from 'appwrite';
 import { account, appwriteConfig, databases } from './config';
-import { IExerciceType, INewWorker } from '../../types';
+import { IExerciceType, IMessageType, INewWorker } from '../../types';
 
 export async function createWorkerAccount(worker: INewWorker) {
     try {
@@ -226,4 +226,26 @@ export async function getMessages() {
         console.error(error)
     }
 
+}
+
+export async function createMessage(message: IMessageType){
+    try {
+        const response = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.messagesCollectionId,
+            ID.unique(),
+            {
+                body: message.body
+            },
+            [
+                Permission.write(Role.any()),
+                Permission.update(Role.any()),
+                Permission.delete(Role.any())
+            ]
+        );
+
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
 }
