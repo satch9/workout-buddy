@@ -17,10 +17,12 @@ import { useAddNewMessage } from "@/lib/react-query/queries";
 import { AddNewMessageValidation } from "@/lib/validation";
 import { useToast } from "@/components/ui/use-toast";
 import Loader from '@/components/ui/shared/Loader';
+import { useWorkerContext } from '@/context/AuthContext';
 
 const NewMessageForm = () => {
 
     const { toast } = useToast();
+    const {worker} = useWorkerContext()
 
     const { mutateAsync: createMessage, isPending: isLoading} = useAddNewMessage();
 
@@ -34,8 +36,11 @@ const NewMessageForm = () => {
     const handleAddNewMessage = async (values: z.infer<typeof AddNewMessageValidation>) => {
         //console.log("add new workout values", values)
 
+        console.log("worker new Message", worker)
         const newMessage = await createMessage({
             body: values.body,
+            user_id: worker.id,
+            username: worker.username
         });
 
         if (!newMessage) {

@@ -14,6 +14,7 @@ import {
 } from "../appwrite/api"
 import { INewWorker } from "@/types";
 import { QUERY_KEYS } from "./queryKey";
+import { IMessageType } from "@/types";
 
 export const useCreateWorkerAccount = () => {
     return useMutation({
@@ -98,9 +99,7 @@ export const useAddNewMessage = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (message: {
-            body: string;
-        }) => createMessage(message),
+        mutationFn: (message: IMessageType) => createMessage(message),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [QUERY_KEYS.GET_RECENT_MESSAGES]
@@ -115,3 +114,4 @@ export const useGetRecentMessages = () => {
         queryFn: getRecentMessages,
     });
 }
+

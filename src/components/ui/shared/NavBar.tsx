@@ -48,7 +48,7 @@ const NavBar = () => {
                 {
                     worker &&
                     <div className="flex items-center justify-end">
-                        <p className="mr-3 sm:text-xl">Bienvenue {worker.username}</p>
+                        <p className="mr-3 sm:text-xl">{worker.username}</p>
                         <Sheet key={"right"} >
                             <SheetTrigger>
                                 <IoChatbox

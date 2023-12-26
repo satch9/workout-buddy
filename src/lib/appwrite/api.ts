@@ -228,14 +228,21 @@ export async function getMessages() {
 
 }
 
-export async function createMessage(message: IMessageType){
+export async function createMessage(message: IMessageType) {
     try {
+
+        const currentWorker = await getCurrentWorker();
+
+        console.log("currentWorker",currentWorker)
+
         const response = await databases.createDocument(
             appwriteConfig.databaseId,
             appwriteConfig.messagesCollectionId,
             ID.unique(),
             {
-                body: message.body
+                body: message.body,
+                user_id: currentWorker?.$id,
+                username: currentWorker?.username
             },
             [
                 Permission.write(Role.any()),
@@ -264,3 +271,4 @@ export async function getRecentMessages() {
 
     return response;
 }
+

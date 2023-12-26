@@ -29,4 +29,6 @@ export type IExerciceType = {
 
 export type IMessageType = {
     body: string;
+    user_id: string;
+    username:string;
 }

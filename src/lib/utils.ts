@@ -1,6 +1,9 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
- 
+import { appwriteConfig, databases } from "./appwrite/config";
+import { Query } from "appwrite";
+
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -48,4 +51,103 @@ export const multiFormatDateString = (timestamp: string = ""): string => {
     default:
       return "A l'instant";
   }
+};
+
+export const capitalizeFirstLetter = (word: string) => {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+// Fonction pour formater l'heure du message
+export function formatHourString(createdAt: string) {
+  const date = new Date(createdAt);
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+// Fonction pour vérifier si une date est aujourd'hui
+export function isToday(date: string) {
+  const currentDate = new Date();
+  const providedDate = new Date(date);
+
+  return (
+    currentDate.getDate() === providedDate.getDate() &&
+    currentDate.getMonth() === providedDate.getMonth() &&
+    currentDate.getFullYear() === providedDate.getFullYear()
+  );
+}
+
+export function getWorkerByWorkerId(workerId: string) {
+  try {
+    const response = databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.workersCollectionId,
+      [Query.equal("workerId", workerId)]
+    );
+
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isPreviousMessageFromOtherDay = (predecessor: {
+  $collectionId: string;
+  $createdAt: string;
+  $databaseId: string;
+  $id: string;
+  $permissions: string[]
+  $updatedAt: string;
+  body: string;
+  user_id: string;
+  username: string
+} | null, message: {
+  $collectionId: string;
+  $createdAt: string;
+  $databaseId: string;
+  $id: string;
+  $permissions: string[]
+  $updatedAt: string;
+  body: string;
+  user_id: string;
+  username: string
+}) => {
+  if (!predecessor) {
+    return true;
+  }
+
+  //console.log('predecessor', predecessor);
+  //console.log("message isprevious...", message)
+
+  const prevDate = new Date(predecessor.$createdAt).getDay();
+  const currentDate = new Date(message.$createdAt).getDay();
+  return prevDate == currentDate;
+}
+
+export const isPredecessorSameAuthor = (predecessor: {
+  $collectionId: string;
+  $createdAt: string;
+  $databaseId: string;
+  $id: string;
+  $permissions: string[]
+  $updatedAt: string;
+  body: string;
+  user_id: string;
+  username: string
+} | null, message: {
+  $collectionId: string;
+  $createdAt: string;
+  $databaseId: string;
+  $id: string;
+  $permissions: string[]
+  $updatedAt: string;
+  body: string;
+  user_id: string;
+  username: string
+}): boolean => {
+  if (!predecessor) {
+    return false;
+  }
+  return predecessor.user_id === message.user_id;
 };

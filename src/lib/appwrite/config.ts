@@ -14,6 +14,8 @@ export const appwriteConfig = {
 
 export const client = new Client()
 
+
+
 client.setProject(appwriteConfig.projectId);
 client.setEndpoint(appwriteConfig.url);
 //client.setJWT(appwriteConfig.jwt)
