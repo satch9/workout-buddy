@@ -272,3 +272,21 @@ export async function getRecentMessages() {
     return response;
 }
 
+export async function deleteMessage(messageId: string) {
+    if (!messageId) return;
+
+    try {
+        const statusCode = await databases.deleteDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.messagesCollectionId,
+            messageId
+        );
+
+        if (!statusCode) throw Error;
+
+        return { statusCode: "OK" }
+    } catch (error) {
+        console.error(error);
+    }
+}
+

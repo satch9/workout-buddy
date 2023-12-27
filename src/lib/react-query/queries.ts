@@ -10,7 +10,8 @@ import {
     deleteExercice, 
     getMessages,
     createMessage,
-    getRecentMessages
+    getRecentMessages,
+    deleteMessage
 } from "../appwrite/api"
 import { INewWorker } from "@/types";
 import { QUERY_KEYS } from "./queryKey";
@@ -113,5 +114,18 @@ export const useGetRecentMessages = () => {
         queryKey: [QUERY_KEYS.GET_RECENT_MESSAGES],
         queryFn: getRecentMessages,
     });
+}
+
+export const useDeleteMessage =()=>{
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (messageId: string)=> deleteMessage(messageId),
+        onSuccess: ()=>{
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_RECENT_EXERCICES]
+            })
+        }
+    })
 }
 

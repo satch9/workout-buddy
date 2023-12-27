@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useWorkerContext } from "@/context/AuthContext";
 import { useSignOutAccount } from "@/lib/react-query/queries";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast"
 import { TbLogout } from "react-icons/tb";
 import { IoChatbox } from "react-icons/io5";
@@ -21,7 +21,7 @@ const NavBar = () => {
     const navigate = useNavigate()
     const { mutateAsync: signOut, isSuccess } = useSignOutAccount();
     const { toast } = useToast();
-   
+    const [unreadMessages, setUnreadMessages] = useState(0);
 
     useEffect(() => {
         if (isSuccess) {
@@ -29,6 +29,13 @@ const NavBar = () => {
             navigate("/sign-in");
         }
     }, [isSuccess, navigate]);
+
+    const incrementUnreadMessages = ()  => {
+
+        setUnreadMessages((prevCount: number) => {
+            return prevCount + 1
+        });
+    };
 
     return (
         <div className="container">
@@ -49,21 +56,33 @@ const NavBar = () => {
                     worker &&
                     <div className="flex items-center justify-end">
                         <p className="mr-3 sm:text-xl">{worker.username}</p>
-                        <Sheet key={"right"} >
-                            <SheetTrigger>
-                                <IoChatbox
-                                    className="w-6 h-6"
-                                />
-                            </SheetTrigger>
+                        <div className="flex items-center mr-3 relative"> {/* Use a wrapper div */}
+                            <Sheet key={"right"}>
+                                <SheetTrigger>
+                                <div
+                                        onClick={() => {
+                                            // Mark messages as read when the icon is clicked
+                                            setUnreadMessages(0);
+                                        }}
+                                    >
+                                        <IoChatbox className="w-6 h-6" />
+                                        {unreadMessages > 0 && (
+                                            <div className="bg-red text-white absolute -top-1 -right-1 rounded-full w-4 h-4 flex items-center justify-center ">
+                                                {unreadMessages}
+                                            </div>
+                                        )}
+                                    </div>
+                                </SheetTrigger>
 
-                            <SheetContent className="bg-slate-500">
-                                <SheetHeader>
-                                    <SheetTitle>Chat entre workers</SheetTitle>
-                                </SheetHeader>
-                                <NewMessageForm />
-                                <Room />
-                            </SheetContent>
-                        </Sheet>
+                                <SheetContent className="bg-slate-500">
+                                    <SheetHeader>
+                                        <SheetTitle>Chat entre workers</SheetTitle>
+                                    </SheetHeader>
+                                    <NewMessageForm incrementUnreadMessages={incrementUnreadMessages} />
+                                    <Room />
+                                </SheetContent>
+                            </Sheet>
+                        </div>
                         <TbLogout className="w-6 h-6" onClick={() => signOut()} />
                     </div>
                 }
@@ -77,4 +96,4 @@ const NavBar = () => {
     )
 }
 
-export default NavBar
+export default NavBar;
