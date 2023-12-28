@@ -1,11 +1,10 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 import { appwriteConfig, databases } from "./appwrite/config";
 import { Query } from "appwrite";
 
-
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function formatDateString(dateString: string) {
@@ -52,19 +51,6 @@ export const multiFormatDateString = (timestamp: string = ""): string => {
       return "A l'instant";
   }
 };
-
-export const capitalizeFirstLetter = (word: string) => {
-  return word.charAt(0).toUpperCase() + word.slice(1);
-}
-
-// Fonction pour formater l'heure du message
-export function formatHourString(createdAt: string) {
-  const date = new Date(createdAt);
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  return `${hours}:${minutes}`;
-}
-
 // Fonction pour vérifier si une date est aujourd'hui
 export function isToday(date: string) {
   const currentDate = new Date();
@@ -77,12 +63,60 @@ export function isToday(date: string) {
   );
 }
 
+export function describeDate(inputDate: string) {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const twoDaysAgo = new Date(today);
+  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+  const threeDaysAgo = new Date(today);
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+  const input = new Date(inputDate);
+  input.setHours(0, 0, 0, 0);
+
+  switch (true) {
+    case input.getTime() === today.setHours(0, 0, 0, 0):
+      return "Aujourd'hui";
+      break;
+    case input.getTime() === yesterday.setHours(0, 0, 0, 0):
+      return "Hier";
+      break;
+    case input.getTime() === twoDaysAgo.setHours(0, 0, 0, 0):
+      return input.toLocaleDateString("fr-FR", { weekday: "long" });
+      break;
+    case input.getTime() === threeDaysAgo.setHours(0, 0, 0, 0):
+      return input.toLocaleDateString("fr-FR", { weekday: "long" });
+      break;
+
+    default:
+      return input.toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+      break;
+  }
+}
+
+export const capitalizeFirstLetter = (word: string) => {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+};
+
+// Fonction pour formater l'heure du message
+export function formatHourString(createdAt: string) {
+  const date = new Date(createdAt);
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
 export function getWorkerByWorkerId(workerId: string) {
   try {
     const response = databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.workersCollectionId,
-      [Query.equal("workerId", workerId)]
+      [Query.equal("workerId", workerId)],
     );
 
     return response;
@@ -92,29 +126,32 @@ export function getWorkerByWorkerId(workerId: string) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isPreviousMessageFromOtherDay = (predecessor: {
-  $collectionId: string;
-  $createdAt: string;
-  $databaseId: string;
-  $id: string;
-  $permissions: string[]
-  $updatedAt: string;
-  body: string;
-  user_id: string;
-  username: string
-} | null, message: {
-  $collectionId: string;
-  $createdAt: string;
-  $databaseId: string;
-  $id: string;
-  $permissions: string[]
-  $updatedAt: string;
-  body: string;
-  user_id: string;
-  username: string
-}) => {
+export const isPreviousMessageFromOtherDay = (
+  predecessor: {
+    $collectionId: string;
+    $createdAt: string;
+    $databaseId: string;
+    $id: string;
+    $permissions: string[];
+    $updatedAt: string;
+    body: string;
+    user_id: string;
+    username: string;
+  } | null,
+  message: {
+    $collectionId: string;
+    $createdAt: string;
+    $databaseId: string;
+    $id: string;
+    $permissions: string[];
+    $updatedAt: string;
+    body: string;
+    user_id: string;
+    username: string;
+  },
+) => {
   if (!predecessor) {
-    return true;
+    return false;
   }
 
   //console.log('predecessor', predecessor);
@@ -123,29 +160,32 @@ export const isPreviousMessageFromOtherDay = (predecessor: {
   const prevDate = new Date(predecessor.$createdAt).getDay();
   const currentDate = new Date(message.$createdAt).getDay();
   return prevDate == currentDate;
-}
+};
 
-export const isPredecessorSameAuthor = (predecessor: {
-  $collectionId: string;
-  $createdAt: string;
-  $databaseId: string;
-  $id: string;
-  $permissions: string[]
-  $updatedAt: string;
-  body: string;
-  user_id: string;
-  username: string
-} | null, message: {
-  $collectionId: string;
-  $createdAt: string;
-  $databaseId: string;
-  $id: string;
-  $permissions: string[]
-  $updatedAt: string;
-  body: string;
-  user_id: string;
-  username: string
-}): boolean => {
+export const isPredecessorSameAuthor = (
+  predecessor: {
+    $collectionId: string;
+    $createdAt: string;
+    $databaseId: string;
+    $id: string;
+    $permissions: string[];
+    $updatedAt: string;
+    body: string;
+    user_id: string;
+    username: string;
+  } | null,
+  message: {
+    $collectionId: string;
+    $createdAt: string;
+    $databaseId: string;
+    $id: string;
+    $permissions: string[];
+    $updatedAt: string;
+    body: string;
+    user_id: string;
+    username: string;
+  },
+): boolean => {
   if (!predecessor) {
     return false;
   }

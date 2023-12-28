@@ -14,7 +14,7 @@ import {
   formatHourString,
   isPredecessorSameAuthor,
   isPreviousMessageFromOtherDay,
-  isToday,
+  describeDate,
 } from "@/lib/utils";
 
 import Loader from "./Loader";
@@ -123,8 +123,11 @@ const Room = () => {
               {isPreviousMessageFromOtherDay(predecessor, message) ? (
                 ""
               ) : (
-                <Badge key={index} className={` text-xs px-2  }`}>
-                  {isToday(message.$createdAt) ? "Aujourd'hui" : "Hier"}
+                <Badge
+                  key={index}
+                  className={` text-xs px-2 bg-white text-black flex justify-center mt-5 mb-5 w-24 mx-auto p-1 hover:not(:hover)}`}
+                >
+                  {describeDate(message.$createdAt)}
                 </Badge>
               )}
 
@@ -158,15 +161,15 @@ const Room = () => {
                 </div>
               )}
               <div
-                className={`rounded-lg relative p-3 mb-2 ${
+                className={`rounded-lg relative p-3 mb-2  overflow-hidden  ${
                   message?.user_id === worker.id
-                    ? "bg-pink-600 w-2/3 self-end"
-                    : "bg-gray-500 w-2/3"
+                    ? "bg-pink-600 w-3/4 self-end"
+                    : "bg-gray-500 w-3/4 self-start"
                 }`}
               >
-                <span className="text-white-800 mb-2 text-sm">
+                <div className="text-white-800 mb-2 text-sm ">
                   {message.body}
-                </span>
+                </div>
                 <div ref={messageEl}></div>
 
                 <small className="text-gray-300 absolute bottom-0 right-0 text-xs p-1 mt-4">

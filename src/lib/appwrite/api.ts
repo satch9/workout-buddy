@@ -75,7 +75,7 @@ export async function signInAccount(user: { email: string; password: string }) {
 
 export async function signOut() {
   try {
-    const session = await account.deleteSessions();
+    const session = await account.deleteSession("current");
 
     return session;
   } catch (error) {
