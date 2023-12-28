@@ -125,7 +125,7 @@ const Room = () => {
               ) : (
                 <Badge
                   key={index}
-                  className={` text-xs px-2 bg-white text-black flex justify-center mt-5 mb-5 w-24 mx-auto p-1 hover:not(:hover)}`}
+                  className={` text-xs px-2 bg-white text-black flex justify-center mt-5 mb-5 w-24 mx-auto p-1 }`}
                 >
                   {describeDate(message.$createdAt)}
                 </Badge>
